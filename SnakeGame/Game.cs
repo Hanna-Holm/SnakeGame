@@ -10,24 +10,23 @@ namespace SnakeGame
         private RenderWindow _window;
         private RectangleShape _snake;
         private Vector2f _position = new Vector2f(100, 200);
+        private Direction _direction;
         private float _moveSpeed = 100f;
-        private const float TimePerFrame = 1f / 60f; // 60 frames per second
         private readonly Clock _clock = new Clock();
 
         public Game()
         {
             // Setup window
             _window = new RenderWindow(new VideoMode(800, 600), "Snake game");
-
-            _snake = new RectangleShape(new Vector2f(10, 10))
-            {
-                FillColor = SFML.Graphics.Color.Cyan,
-                Position = _position
-            };
         }
 
         public void Run()
         {
+            bool shouldGoLeft = false;
+            bool shouldGoRight = false;
+            bool shouldGoUp = false;
+            bool shouldGoDown = false;
+
             // Main game loop
             while (_window.IsOpen)
             {
@@ -38,33 +37,65 @@ namespace SnakeGame
                 float deltaTime = _clock.Restart().AsSeconds();
 
                 // Update game logic here
+                _snake = new RectangleShape(new Vector2f(10, 10))
+                {
+                    FillColor = SFML.Graphics.Color.Green,
+                    Position = _position
+                };
 
-                //_position.X += _moveSpeed * deltaTime;
-                //_snake.Position = _position;
+                // Update state machine
 
-                Render();
-
-
-                // Be able to give input to move snake
                 if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
                 {
-                    _snake.Position -= new Vector2f(100 * deltaTime, 0);
+                    shouldGoLeft = true;
+                    shouldGoRight = false;
+                    shouldGoUp = false;
+                    shouldGoDown = false;
+
+                }
+                else if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
+                {
+                    shouldGoRight = true;
+                    shouldGoLeft = false;
+                    shouldGoUp = false;
+                    shouldGoDown = false;
+                }
+                else if (Keyboard.IsKeyPressed(Keyboard.Key.Up))
+                {
+                    shouldGoUp = true;
+                    shouldGoRight = false;
+                    shouldGoLeft = false;
+                    shouldGoDown = false;
+
+                }
+                else if (Keyboard.IsKeyPressed(Keyboard.Key.Down))
+                {
+                    shouldGoDown = true;
+                    shouldGoRight = false;
+                    shouldGoLeft = false;
+                    shouldGoUp = false;
                 }
 
-                if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
+                if (shouldGoLeft)
                 {
-                    _snake.Position += new Vector2f(100 * deltaTime, 0);
+                    _position.X -= _moveSpeed * deltaTime;
+                }
+                else if (shouldGoRight)
+                {
+                    _position.X += _moveSpeed * deltaTime;
+                }
+                else if (shouldGoUp)
+                {
+                    _position.Y -= _moveSpeed * deltaTime;
+                }
+                else if (shouldGoDown)
+                {
+                    _position.Y += _moveSpeed * deltaTime;
                 }
 
-                if (Keyboard.IsKeyPressed(Keyboard.Key.Up))
-                {
-                    _snake.Position -= new Vector2f(0, 100 * deltaTime);
-                }
+                _snake.Position = _position;
 
-                if (Keyboard.IsKeyPressed(Keyboard.Key.Down))
-                {
-                    _snake.Position += new Vector2f(0, 100 * deltaTime);
-                }
+                Render();
 
                 // handle collisions with apple and walls
             }
@@ -83,4 +114,5 @@ namespace SnakeGame
             _window.Display();
         }
     }
+
 }
