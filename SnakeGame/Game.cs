@@ -1,7 +1,6 @@
 ﻿using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
-using System.Drawing;
 
 namespace SnakeGame
 {
@@ -12,20 +11,17 @@ namespace SnakeGame
         private Vector2f _position = new Vector2f(100, 200);
         private float _moveSpeed = 100f;
         private readonly Clock _clock = new Clock();
+        private State _movementDirection;
 
         public Game()
         {
             // Setup window
             _window = new RenderWindow(new VideoMode(800, 600), "Snake game");
+            _movementDirection = State.MovingRight;
         }
 
         public void Run()
         {
-            bool shouldGoLeft = false;
-            bool shouldGoRight = false;
-            bool shouldGoUp = false;
-            bool shouldGoDown = false;
-
             // Main game loop
             while (_window.IsOpen)
             {
@@ -44,52 +40,38 @@ namespace SnakeGame
 
                 // Update state machine
 
-                if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
+                switch (_movementDirection)
                 {
-                    shouldGoLeft = true;
-                    shouldGoRight = false;
-                    shouldGoUp = false;
-                    shouldGoDown = false;
+                    case State.MovingLeft:
+                        _position.X -= _moveSpeed * deltaTime;
+                        if (Keyboard.IsKeyPressed(Keyboard.Key.Up))
+                            _movementDirection = State.MovingUp;
+                        else if (Keyboard.IsKeyPressed(Keyboard.Key.Down))
+                            _movementDirection = State.MovingDown;
+                        break;
+                    case State.MovingRight:
+                        _position.X += _moveSpeed * deltaTime;
 
-                }
-                else if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
-                {
-                    shouldGoRight = true;
-                    shouldGoLeft = false;
-                    shouldGoUp = false;
-                    shouldGoDown = false;
-                }
-                else if (Keyboard.IsKeyPressed(Keyboard.Key.Up))
-                {
-                    shouldGoUp = true;
-                    shouldGoRight = false;
-                    shouldGoLeft = false;
-                    shouldGoDown = false;
+                        if (Keyboard.IsKeyPressed(Keyboard.Key.Up))
+                            _movementDirection = State.MovingUp;
+                        else if (Keyboard.IsKeyPressed(Keyboard.Key.Down))
+                            _movementDirection = State.MovingDown;
+                        break;
+                    case State.MovingUp:
+                        _position.Y -= _moveSpeed * deltaTime;
 
-                }
-                else if (Keyboard.IsKeyPressed(Keyboard.Key.Down))
-                {
-                    shouldGoDown = true;
-                    shouldGoRight = false;
-                    shouldGoLeft = false;
-                    shouldGoUp = false;
-                }
-
-                if (shouldGoLeft)
-                {
-                    _position.X -= _moveSpeed * deltaTime;
-                }
-                else if (shouldGoRight)
-                {
-                    _position.X += _moveSpeed * deltaTime;
-                }
-                else if (shouldGoUp)
-                {
-                    _position.Y -= _moveSpeed * deltaTime;
-                }
-                else if (shouldGoDown)
-                {
-                    _position.Y += _moveSpeed * deltaTime;
+                        if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
+                            _movementDirection = State.MovingLeft;
+                        else if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
+                            _movementDirection = State.MovingRight;
+                        break;
+                    case State.MovingDown:
+                        _position.Y += _moveSpeed * deltaTime;
+                        if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
+                            _movementDirection = State.MovingLeft;
+                        else if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
+                            _movementDirection = State.MovingRight;
+                        break;
                 }
 
                 _snake.Position = _position;
@@ -114,4 +96,11 @@ namespace SnakeGame
         }
     }
 
+    enum State
+    {
+        MovingLeft,
+        MovingRight,
+        MovingUp,
+        MovingDown
+    }
 }
