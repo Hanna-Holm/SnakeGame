@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace SnakeGame
 {
-    internal class Apple : IEdible
+    internal interface IState
     {
-        public void GetEatenBy(Snake snake)
-        {
-            snake.Length += 10;
-        }
     }
 }
