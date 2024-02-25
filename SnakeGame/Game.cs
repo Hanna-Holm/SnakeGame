@@ -10,7 +10,6 @@ namespace SnakeGame
         private RenderWindow _window;
         private RectangleShape _snake;
         private Vector2f _position = new Vector2f(100, 200);
-        private Direction _direction;
         private float _moveSpeed = 100f;
         private readonly Clock _clock = new Clock();
 
