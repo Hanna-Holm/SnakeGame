@@ -1,43 +1,100 @@
 ﻿using SFML.System;
 using SFML.Graphics;
 using SFML.Window;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SnakeGame
 {
     internal class Snake
     {
-        //public Vector2f Position = new Vector2f(100, 200);
-        //public RectangleShape Body = new RectangleShape(new Vector2f(10, 10));
-        //public int Length = 10;
-        //private bool _isAlive = true;
-        //private Direction _direction;
+        private const float Speed = 100f;
+        private Direction _direction = Direction.Right;
+        public Vector2f Position => _position;
+        private Vector2f _position = new Vector2f(100, 200);
+        private RectangleShape _body;
+        public int LengthInSegments { get; private set; } = 10;
+        public bool IsAlive;
 
-        //public Snake()
-        //{
-        //    _direction = Direction.Right;
-        //    Body.FillColor = SFML.Graphics.Color.Green;
-        //}
+        public Snake()
+        {
+            IsAlive = true;
+            _body = new RectangleShape(new Vector2f(LengthInSegments, 10))
+            {
+                FillColor = Color.Green,
+                Position = new Vector2f(100, 200)
+            };
+        }
+
+        public void Move(float deltaTime)
+        {
+
+            HandleDirectionChange();
+            KeepGoingInCurrentDirection(deltaTime);
+        }
+
+        public void KeepGoingInCurrentDirection(float deltaTime)
+        {
+            switch (_direction)
+            {
+                case Direction.Left:
+                    _position.X -= Speed * deltaTime;
+                    break;
+                case Direction.Right:
+                    _position.X += Speed * deltaTime;
+                    break;
+                case Direction.Up:
+                    _position.Y -= Speed * deltaTime;
+                    break;
+                case Direction.Down:
+                    _position.Y += Speed * deltaTime;
+                    break;
+            }
+
+            _body.Position = _position;
+        }
+
+        private void HandleDirectionChange()
+        {
+            if (_direction == Direction.Left || _direction == Direction.Right)
+            {
+                if (Keyboard.IsKeyPressed(Keyboard.Key.Up))
+                    _direction = Direction.Up;
+                else if (Keyboard.IsKeyPressed(Keyboard.Key.Down))
+                    _direction = Direction.Down;
+            }
+            else if (_direction == Direction.Down || _direction == Direction.Up)
+            {
+                if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
+                    _direction = Direction.Right;
+                else if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
+                    _direction = Direction.Left;
+            }
+        }
+
+        public void IncreaseLength()
+        {
+            LengthInSegments += 10;
+            _body = new RectangleShape(new Vector2f(LengthInSegments, 10))
+            {
+                FillColor = Color.Green
+            };
+        }
 
         //private void Eat(IEdible edible)
         //{
         //    edible.GetEatenBy(this);
         //}
 
-        //public void SetDirection(Direction newDirection)
-        //{
-        //    // Prevent the snake from immediately reversing its direction
-        //    if ((_direction == Direction.Left && newDirection != Direction.Right) ||
-        //        (_direction == Direction.Right && newDirection != Direction.Left) ||
-        //        (_direction == Direction.Up && newDirection != Direction.Down) ||
-        //        (_direction == Direction.Down && newDirection != Direction.Up))
-        //    {
-        //        _direction = newDirection;
-        //    }
-        //}
+        public void Render(RenderWindow window)
+        {
+            window.Draw(_body);
+        }
     }
 
+    enum Direction
+    {
+        Left,
+        Right,
+        Up,
+        Down
+    }
 }

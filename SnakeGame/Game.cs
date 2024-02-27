@@ -6,101 +6,57 @@ namespace SnakeGame
 {
     internal class Game
     {
-        private RenderWindow _window;
-        private RectangleShape _snake;
-        private Vector2f _position = new Vector2f(100, 200);
-        private float _moveSpeed = 100f;
+        public RenderWindow Window { get; private set; }
+        public uint Width = 800;
+        public uint Height = 600;
+        private GameBoard _gameBoard;
         private readonly Clock _clock = new Clock();
-        private State _movementDirection;
+        public float deltaTime;
 
         public Game()
         {
             // Setup window
-            _window = new RenderWindow(new VideoMode(800, 600), "Snake game");
-            _movementDirection = State.MovingRight;
+            Window = new RenderWindow(new VideoMode(Width, Height), "Snake game");
+            _gameBoard = new GameBoard(Width, Height);
         }
 
         public void Run()
         {
+
             // Main game loop
-            while (_window.IsOpen)
+            while (Window.IsOpen)
             {
                 // Handle events
-                _window.DispatchEvents();
+                Window.DispatchEvents();
 
                 // Get elapsed time since clock was restarted.
-                float deltaTime = _clock.Restart().AsSeconds();
+                deltaTime = _clock.Restart().AsSeconds();
 
-                // Update game logic here
-                _snake = new RectangleShape(new Vector2f(10, 10))
-                {
-                    FillColor = SFML.Graphics.Color.Green,
-                    Position = _position
-                };
+                // Game logic
+                _gameBoard.Snake.Move(deltaTime);
 
-                // Update state machine
+                // CheckCollision
+                //      -> Apple -->  Eat()  --> Snake: IncreaseLength(), Apple: GenerateNewPosition()
+                //      -> walls --> Lose()
 
-                switch (_movementDirection)
-                {
-                    case State.MovingLeft:
-                        _position.X -= _moveSpeed * deltaTime;
-                        if (Keyboard.IsKeyPressed(Keyboard.Key.Up))
-                            _movementDirection = State.MovingUp;
-                        else if (Keyboard.IsKeyPressed(Keyboard.Key.Down))
-                            _movementDirection = State.MovingDown;
-                        break;
-                    case State.MovingRight:
-                        _position.X += _moveSpeed * deltaTime;
-
-                        if (Keyboard.IsKeyPressed(Keyboard.Key.Up))
-                            _movementDirection = State.MovingUp;
-                        else if (Keyboard.IsKeyPressed(Keyboard.Key.Down))
-                            _movementDirection = State.MovingDown;
-                        break;
-                    case State.MovingUp:
-                        _position.Y -= _moveSpeed * deltaTime;
-
-                        if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
-                            _movementDirection = State.MovingLeft;
-                        else if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
-                            _movementDirection = State.MovingRight;
-                        break;
-                    case State.MovingDown:
-                        _position.Y += _moveSpeed * deltaTime;
-                        if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
-                            _movementDirection = State.MovingLeft;
-                        else if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
-                            _movementDirection = State.MovingRight;
-                        break;
-                }
-
-                _snake.Position = _position;
 
                 Render();
-
-                // handle collisions with apple and walls
             }
-
         }
 
         private void Render()
         {
             // Clear the window
-            _window.Clear(SFML.Graphics.Color.Black);
+            Window.Clear(Color.Black);
 
             // Draw game elements
-            _window.Draw(_snake);
+            _gameBoard.Snake.Render(Window);
+            _gameBoard.Apple.Render(Window);
 
             // Display the contents of the window
-            _window.Display();
+            Window.Display();
         }
     }
 
-    enum State
-    {
-        MovingLeft,
-        MovingRight,
-        MovingUp,
-        MovingDown
-    }
+    
 }
