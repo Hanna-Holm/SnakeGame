@@ -6,47 +6,55 @@ namespace SnakeGame
 {
     internal class Game
     {
-        private RenderWindow _window;
-        private Snake _snake;
+        public RenderWindow Window { get; private set; }
+        public uint Width = 800;
+        public uint Height = 600;
+        private GameBoard _gameBoard;
+        private readonly Clock _clock = new Clock();
+        public float deltaTime;
 
         public Game()
         {
             // Setup window
-            _window = new RenderWindow(new VideoMode(800, 600), "Snake game");
-            _snake = new Snake();
+            Window = new RenderWindow(new VideoMode(Width, Height), "Snake game");
+            _gameBoard = new GameBoard(Width, Height);
         }
 
         public void Run()
         {
 
             // Main game loop
-            while (_window.IsOpen)
+            while (Window.IsOpen)
             {
                 // Handle events
-                _window.DispatchEvents();
+                Window.DispatchEvents();
 
                 // Get elapsed time since clock was restarted.
-                // float deltaTime = _clock.Restart().AsSeconds();
+                deltaTime = _clock.Restart().AsSeconds();
 
                 // Game logic
-                _snake.Move();
+                _gameBoard.Snake.Move(deltaTime);
+
+                // CheckCollision
+                //      -> Apple -->  Eat()  --> Snake: IncreaseLength(), Apple: GenerateNewPosition()
+                //      -> walls --> Lose()
 
 
                 Render();
             }
-
         }
 
         private void Render()
         {
             // Clear the window
-            _window.Clear(Color.Black);
+            Window.Clear(Color.Black);
 
             // Draw game elements
-            _window.Draw(_snake.Body);
+            _gameBoard.Snake.Render(Window);
+            _gameBoard.Apple.Render(Window);
 
             // Display the contents of the window
-            _window.Display();
+            Window.Display();
         }
     }
 

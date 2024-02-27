@@ -6,106 +6,88 @@ namespace SnakeGame
 {
     internal class Snake
     {
-        private float _moveSpeed = 100f;
-        private Direction _movementDirection = Direction.Right;
+        private const float Speed = 100f;
+        private Direction _direction = Direction.Right;
+        public Vector2f Position => _position;
         private Vector2f _position = new Vector2f(100, 200);
-        public RectangleShape Body;
-        public int LengthInSegments = 1;
+        private RectangleShape _body;
+        public int LengthInSegments { get; private set; } = 10;
         public bool IsAlive;
-        private readonly Clock _clock = new Clock();
-        public float deltaTime;
-
-        // metoder: SetDirection, IncreaseLength, Eat, CheckCollision -> food / walls, Lose, Reset
-
-        //public Vector2f Position = new Vector2f(100, 200);
-        //public RectangleShape Body = new RectangleShape(new Vector2f(10, 10));
-        //public int Length = 10;
-        //private bool _isAlive = true;
-        //private Direction _direction;
 
         public Snake()
         {
             IsAlive = true;
-            Body = new RectangleShape(new Vector2f(10, 10))
+            _body = new RectangleShape(new Vector2f(LengthInSegments, 10))
             {
                 FillColor = Color.Green,
-                Position = _position
+                Position = new Vector2f(100, 200)
             };
         }
 
-        public void Move()
+        public void Move(float deltaTime)
         {
-            deltaTime = _clock.Restart().AsSeconds();
-            CheckDirection();
-            Body.Position = _position;
-            HandleInput();
 
-            // handle collisions with apple and walls
+            HandleDirectionChange();
+            KeepGoingInCurrentDirection(deltaTime);
         }
 
-        public void CheckDirection()
+        public void KeepGoingInCurrentDirection(float deltaTime)
         {
-            switch (_movementDirection)
+            switch (_direction)
             {
                 case Direction.Left:
-                    MoveLeft();
+                    _position.X -= Speed * deltaTime;
                     break;
                 case Direction.Right:
-                    MoveRight();
+                    _position.X += Speed * deltaTime;
                     break;
                 case Direction.Up:
-                    MoveUp();
+                    _position.Y -= Speed * deltaTime;
                     break;
                 case Direction.Down:
-                    MoveDown();
+                    _position.Y += Speed * deltaTime;
                     break;
             }
+
+            _body.Position = _position;
         }
 
-        private void MoveDown()
+        private void HandleDirectionChange()
         {
-            _position.Y += _moveSpeed * deltaTime;
-        }
-
-        private void MoveUp()
-        {
-            _position.Y -= _moveSpeed * deltaTime;
-        }
-
-        private void MoveRight()
-        {
-            _position.X += _moveSpeed * deltaTime;
-        }
-
-        private void MoveLeft()
-        {
-            _position.X -= _moveSpeed * deltaTime;
-        }
-
-        private void HandleInput()
-        {
-            if (_movementDirection == Direction.Left || _movementDirection == Direction.Right)
+            if (_direction == Direction.Left || _direction == Direction.Right)
             {
                 if (Keyboard.IsKeyPressed(Keyboard.Key.Up))
-                    _movementDirection = Direction.Up;
+                    _direction = Direction.Up;
                 else if (Keyboard.IsKeyPressed(Keyboard.Key.Down))
-                    _movementDirection = Direction.Down;
+                    _direction = Direction.Down;
             }
-            else if (_movementDirection == Direction.Down || _movementDirection == Direction.Up)
+            else if (_direction == Direction.Down || _direction == Direction.Up)
             {
                 if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
-                    _movementDirection = Direction.Right;
+                    _direction = Direction.Right;
                 else if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
-                    _movementDirection = Direction.Left;
+                    _direction = Direction.Left;
             }
         }
 
+        public void IncreaseLength()
+        {
+            LengthInSegments += 10;
+            _body = new RectangleShape(new Vector2f(LengthInSegments, 10))
+            {
+                FillColor = Color.Green
+            };
+        }
 
         //private void Eat(IEdible edible)
         //{
         //    edible.GetEatenBy(this);
         //}
 
+        public void Render(RenderWindow window)
+        {
+            window.Draw(_body);
+        }
     }
 
     enum Direction
