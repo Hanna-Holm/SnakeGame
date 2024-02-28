@@ -8,13 +8,21 @@ namespace SnakeGame
     {
         public Snake Snake { get; }
         public Apple Apple { get; }
-        public Vector2i Position { get; private set; }
-
+        private uint _width;
+        private uint _height;
 
         public GameBoard(uint width, uint height)
         {
             Snake = new Snake();
             Apple = new Apple(width, height);
+        }
+
+        public void CheckCollision()
+        {
+            if (Apple.Shape.Position == Snake.Position)
+            {
+                Apple.GenerateNewPosition(_width, _height);
+            }
         }
     }
 }

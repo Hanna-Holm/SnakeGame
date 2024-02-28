@@ -35,6 +35,8 @@ namespace SnakeGame
                 // Game logic
                 _gameBoard.Snake.Move(deltaTime);
 
+                _gameBoard.CheckCollision();
+
                 // CheckCollision
                 //      -> Apple -->  Eat()  --> Snake: IncreaseLength(), Apple: GenerateNewPosition()
                 //      -> walls --> Lose()
