@@ -19,10 +19,24 @@ namespace SnakeGame
 
         public void CheckCollision()
         {
-            if (Apple.Shape.Position == Snake.Position)
+            if (areColliding())
             {
-                Apple.GenerateNewPosition(_width, _height);
+                Apple.GenerateNewPosition();
             }
+        }
+
+        private bool areColliding()
+        {
+            float collisionRange = 5f;
+
+            if (Snake.Position.X >= Apple.Shape.Position.X - collisionRange &&
+                Snake.Position.X <= Apple.Shape.Position.X + collisionRange &&
+                Snake.Position.Y >= Apple.Shape.Position.Y - collisionRange &&
+                Snake.Position.Y <= Apple.Shape.Position.Y + collisionRange)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
