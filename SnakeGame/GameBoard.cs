@@ -10,6 +10,7 @@ namespace SnakeGame
         public Apple Apple { get; }
         private uint _width;
         private uint _height;
+        private float _collisionRange = 7f;
 
         public GameBoard(uint width, uint height)
         {
@@ -19,10 +20,25 @@ namespace SnakeGame
 
         public void CheckCollision()
         {
-            if (Apple.Shape.Position == Snake.Position)
+            if (areColliding())
             {
-                Apple.GenerateNewPosition(_width, _height);
+                Apple.GenerateNewPosition();
+                Snake.IncreaseLength();
             }
+        }
+
+        private bool areColliding()
+        {
+
+            if (Snake.Position.X >= Apple.Shape.Position.X - _collisionRange &&
+                Snake.Position.X <= Apple.Shape.Position.X + _collisionRange &&
+                Snake.Position.Y >= Apple.Shape.Position.Y - _collisionRange &&
+                Snake.Position.Y <= Apple.Shape.Position.Y + _collisionRange)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

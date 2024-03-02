@@ -6,6 +6,8 @@ namespace SnakeGame
     internal class Apple
     {
         public RectangleShape Shape { get; }
+        private uint _upperLimitWidth;
+        private uint _upperLimitHeight;
 
         public Apple(uint gameBoardWidth, uint gameBoardHeight)
         {
@@ -13,14 +15,17 @@ namespace SnakeGame
             {
                 FillColor = Color.Red,
             };
-            
-            GenerateNewPosition(gameBoardWidth, gameBoardHeight);
+
+            _upperLimitWidth = gameBoardWidth;
+            _upperLimitHeight = gameBoardHeight;
+
+            GenerateNewPosition();
         }
 
-        public void GenerateNewPosition(uint gameBoardWidth, uint gameBoardHeight)
+        public void GenerateNewPosition()
         {
-            int xPosition = new Random().Next(0, (int)gameBoardWidth);
-            int yPosition = new Random().Next(0, (int)gameBoardHeight);
+            int xPosition = new Random().Next(0, (int)_upperLimitWidth);
+            int yPosition = new Random().Next(0, (int)_upperLimitHeight);
             Shape.Position = new Vector2f(xPosition, yPosition);
         }
 

@@ -6,18 +6,18 @@ namespace SnakeGame
 {
     internal class Snake
     {
-        private const float Speed = 100f;
+        private const float Speed = 120f;
         private Direction _direction = Direction.Right;
         public Vector2f Position => _position;
         private Vector2f _position = new Vector2f(100, 200);
         private RectangleShape _body;
-        public int LengthInSegments { get; private set; } = 10;
+        public int Length { get; private set; } = 10;
         public bool IsAlive;
 
         public Snake()
         {
             IsAlive = true;
-            _body = new RectangleShape(new Vector2f(LengthInSegments, 10))
+            _body = new RectangleShape(new Vector2f(Length, 10))
             {
                 FillColor = Color.Green,
                 Position = new Vector2f(100, 200)
@@ -26,7 +26,6 @@ namespace SnakeGame
 
         public void Move(float deltaTime)
         {
-
             HandleDirectionChange();
             KeepGoingInCurrentDirection(deltaTime);
         }
@@ -72,17 +71,12 @@ namespace SnakeGame
 
         public void IncreaseLength()
         {
-            LengthInSegments += 10;
-            _body = new RectangleShape(new Vector2f(LengthInSegments, 10))
+            Length += 10;
+            _body = new RectangleShape(new Vector2f(Length, 10))
             {
                 FillColor = Color.Green
             };
         }
-
-        //private void Eat(IEdible edible)
-        //{
-        //    edible.GetEatenBy(this);
-        //}
 
         public void Render(RenderWindow window)
         {
