@@ -6,7 +6,7 @@ namespace SnakeGame
 {
     internal class Snake
     {
-        private const float Speed = 100f;
+        private const float Speed = 120f;
         private Direction _direction = Direction.Right;
         public Vector2f Position => _position;
         private Vector2f _position = new Vector2f(100, 200);
@@ -26,7 +26,6 @@ namespace SnakeGame
 
         public void Move(float deltaTime)
         {
-
             HandleDirectionChange();
             KeepGoingInCurrentDirection(deltaTime);
         }
