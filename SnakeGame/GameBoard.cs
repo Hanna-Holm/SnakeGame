@@ -1,15 +1,10 @@
 ﻿
-using SFML.Graphics;
-using SFML.System;
-
 namespace SnakeGame
 {
     internal class GameBoard
     {
         public Snake Snake { get; }
         public Apple Apple { get; }
-        private uint _width;
-        private uint _height;
         private float _collisionRange = 7f;
 
         public GameBoard(uint width, uint height)
@@ -30,10 +25,10 @@ namespace SnakeGame
         private bool areColliding()
         {
 
-            if (Snake.Position.X >= Apple.Shape.Position.X - _collisionRange &&
-                Snake.Position.X <= Apple.Shape.Position.X + _collisionRange &&
-                Snake.Position.Y >= Apple.Shape.Position.Y - _collisionRange &&
-                Snake.Position.Y <= Apple.Shape.Position.Y + _collisionRange)
+            if (Snake.HeadPosition.X >= Apple.Shape.Position.X - _collisionRange &&
+                Snake.HeadPosition.X <= Apple.Shape.Position.X + _collisionRange &&
+                Snake.HeadPosition.Y >= Apple.Shape.Position.Y - _collisionRange &&
+                Snake.HeadPosition.Y <= Apple.Shape.Position.Y + _collisionRange)
             {
                 return true;
             }
